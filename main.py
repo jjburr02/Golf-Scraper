@@ -195,3 +195,4 @@ def send_test_email():
     send_email(
         "TEE TIME FINDER: service started",
         "This is a startup heartbeat to confirm SMTP delivery."
+    )
