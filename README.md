@@ -4,7 +4,6 @@ Continuously polls public Salt Lake City golf course booking pages for **Saturda
 
 ## Features
 - Continuous polling (async) with jitter to be polite.
-
 - Pluggable "providers" (Lightspeed/Chronogolf HTML, generic HTML time scraping fallback).
 - Persistent state to avoid duplicate SMS for the same slot.
 - Ready for **Render** deployment.
