@@ -58,13 +58,14 @@ JITTER_SECONDS = int(os.getenv("JITTER_SECONDS", "30"))
 
 # ---- Courses to monitor ----
 COURSE_SOURCES = [
-    {"name": "Bonneville",     "provider": "lightspeed_web", "url": "https://slc-golf.com/bonneville/",    "party_size": 4},
-    {"name": "Forest Dale",    "provider": "lightspeed_web", "url": "https://slc-golf.com/forestdale/",    "party_size": 4},
-    {"name": "Glendale",       "provider": "lightspeed_web", "url": "https://slc-golf.com/glendale/",      "party_size": 4},
-    {"name": "Mountain Dell",  "provider": "lightspeed_web", "url": "https://slc-golf.com/mountaindell/",  "party_size": 4},
-    {"name": "Nibley Park",    "provider": "lightspeed_web", "url": "https://slc-golf.com/nibley-park/",   "party_size": 4},
-    {"name": "Rose Park",      "provider": "lightspeed_web", "url": "https://slc-golf.com/rose-park/",     "party_size": 4},
-    {"name": "Old Mill (SLCo)","provider": "lightspeed_web", "url": "https://slco.org/parks-recreation/facilities/golf/old-mill/", "party_size": 4},
+    {"name": "Bonneville",     "provider": "lightspeed_web", "url": "https://www.chronogolf.com/club/bonneville-golf-course",    "party_size": 4},
+    {"name": "Forest Dale",    "provider": "lightspeed_web", "url": "https://www.chronogolf.com/club/forest-dale-golf-course",    "party_size": 4},
+    {"name": "Glendale",       "provider": "lightspeed_web", "url": "https://www.chronogolf.com/club/glendale-golf-course",      "party_size": 4},
+    {"name": "Mountain Dell",  "provider": "lightspeed_web", "url": "https://www.chronogolf.com/club/mountain-dell-golf-club",  "party_size": 4},
+    {"name": "Valley View",    "provider": "lightspeed_web", "url": "https://foreupsoftware.com/index.php/booking/index/19501#teetimes",   "party_size": 4},
+    {"name": "Rose Park",      "provider": "lightspeed_web", "url": "https://www.chronogolf.com/club/rose-park-golf-course",     "party_size": 4},
+    {"name": "Old Mill (SLCo)","provider": "lightspeed_web", "url": "https://www.chronogolf.com/club/old-mill-slco", "party_size": 4},
+    {"name": "Soldier Hollow","provider": "lightspeed_web", "url": "https://stateparks.utah.gov/golf/soldier-hollow/teetime/", "party_size": 4},
 ]
 
 # ----------------- Helper Functions -----------------
