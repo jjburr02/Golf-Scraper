@@ -30,7 +30,7 @@ SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USERNAME = os.getenv("SMTP_USERNAME")   # e.g., yourgmail@gmail.com
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")   # e.g., Gmail App Password
-EMAIL_TO = "jjburr@bu.edu"                   # destination email
+EMAIL_TO = "jjburr02@gmail.com"                   # destination email
 EMAIL_FROM = SMTP_USERNAME                   # sender (same as your SMTP username)
 
 # Fail fast if creds missing
