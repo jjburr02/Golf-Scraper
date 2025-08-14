@@ -190,3 +190,8 @@ print("SMTP_PASSWORD set?:", "yes" if os.getenv("SMTP_PASSWORD") else "no")
 smtp_vars = {k: os.getenv(k) for k in os.environ if k.upper().startswith("SMTP_")}
 print("All SMTP* envs seen by the process:", smtp_vars)
 print("---- END ----")
+
+def send_test_email():
+    send_email(
+        "TEE TIME FINDER: service started",
+        "This is a startup heartbeat to confirm SMTP delivery."
