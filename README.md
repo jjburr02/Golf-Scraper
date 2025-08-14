@@ -47,7 +47,9 @@ Edit `main.py` → `COURSE_SOURCES` to add/adjust courses. Each entry includes:
 - Mountain Dell: https://slc-golf.com/mountaindell/
 - Nibley Park: https://slc-golf.com/nibley-park/
 - Rose Park: https://slc-golf.com/rose-park/
-- Old Mill (SLCo): https://slco.org/parks-recreation/facilities/golf/old-mill/
+- Valley View: https://foreupsoftware.com/index.php/booking/index/19501#teetimes
+- Soldier Hollow: https://stateparks.utah.gov/golf/soldier-hollow/teetime/
+- Old Mill (SLCo): https://www.chronogolf.com/club/old-mill-slco
 
 > **Tip:** These SLC pages usually link out to the actual booking widget (often Lightspeed/Chronogolf).
 > If you know the direct booking URL (the page with the tee sheet), paste that as `url` for better accuracy.
