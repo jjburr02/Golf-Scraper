@@ -1,3 +1,40 @@
+# ==== MUST BE THE FIRST LINES OF main.py ====
+import os, sys
+
+# Ensure sibling packages (providers/, storage/) are importable
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+from dotenv import load_dotenv
+load_dotenv()  # local dev only; Render uses dashboard env vars
+
+# ---- DIAGNOSTIC + REQUIRED ENV ----
+def _require_env(name: str) -> str:
+    val = os.getenv(name)
+    if val is None or (isinstance(val, str) and val.strip() == ""):
+        raise RuntimeError(f"Missing required env var: {name}")
+    return val
+
+print("[startup] cwd:", os.getcwd())
+print("[startup] base dir:", BASE_DIR)
+try:
+    print("[startup] dir contents:", os.listdir(BASE_DIR))
+except Exception as e:
+    print("[startup] listdir error:", e)
+
+# Show what the process can actually see (password masked)
+print("[startup] SMTP_SERVER:", os.getenv("SMTP_SERVER"))
+print("[startup] SMTP_PORT:", os.getenv("SMTP_PORT"))
+print("[startup] SMTP_USERNAME:", os.getenv("SMTP_USERNAME"))
+print("[startup] SMTP_PASSWORD set?:", "yes" if os.getenv("SMTP_PASSWORD") else "no")
+
+# Assign SMTP settings (fail fast if missing)
+SMTP_SERVER   = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT     = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USERNAME = _require_env("SMTP_USERNAME")   # full Gmail address
+SMTP_PASSWORD = _require_env("SMTP_PASSWORD")   # 16-char Gmail App Password (no spaces)
+# ==============================================
 
 import os, sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -28,33 +65,12 @@ print("[startup] cwd:", os.getcwd())
 print("[startup] __file__ dir:", BASE_DIR)
 print("[startup] seen files:", os.listdir(BASE_DIR))
 
-# Pull env with validation (won't print password)
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USERNAME = _require_env("SMTP_USERNAME")   # must be your full Gmail address
-SMTP_PASSWORD = _require_env("SMTP_PASSWORD")   # must be the 16-char App Password
-print(f"[startup] SMTP_SERVER={SMTP_SERVER} SMTP_PORT={SMTP_PORT} SMTP_USERNAME={SMTP_USERNAME}")
-
 # ---- App settings ----
 TIMEZONE = os.getenv("TIMEZONE", "America/Denver")
 TZ = pytz.timezone(TIMEZONE)
 
 POLL_SECONDS = int(os.getenv("POLL_SECONDS", "600"))
 JITTER_SECONDS = int(os.getenv("JITTER_SECONDS", "30"))
-
-# ---- Email configuration ----
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USERNAME = os.getenv("SMTP_USERNAME")   # e.g., yourgmail@gmail.com
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")   # e.g., Gmail App Password
-EMAIL_TO = "jjburr02@gmail.com"                   # destination email
-EMAIL_FROM = SMTP_USERNAME                   # sender (same as your SMTP username)
-
-# Fail fast if creds missing
-if not (SMTP_USERNAME and SMTP_PASSWORD):
-    raise RuntimeError(
-        "Missing SMTP_USERNAME/SMTP_PASSWORD. For Gmail, enable 2FA and use an App Password."
-    )
 
 # ---- Courses to monitor (use actual tee-sheet URLs when possible) ----
 COURSE_SOURCES = [
