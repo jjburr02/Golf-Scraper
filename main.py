@@ -17,6 +17,23 @@ from providers.generic_html import parse_generic_html
 from storage import state as state_store
 
 load_dotenv()
+# --- DEBUG: verify environment (Render ignores .env; uses dashboard vars) ---
+def _require_env(name):
+    val = os.getenv(name)
+    if val is None or (isinstance(val, str) and val.strip() == ""):
+        raise RuntimeError(f"Missing required env var: {name}")
+    return val
+
+print("[startup] cwd:", os.getcwd())
+print("[startup] __file__ dir:", BASE_DIR)
+print("[startup] seen files:", os.listdir(BASE_DIR))
+
+# Pull env with validation (won't print password)
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+SMTP_USERNAME = _require_env("SMTP_USERNAME")   # must be your full Gmail address
+SMTP_PASSWORD = _require_env("SMTP_PASSWORD")   # must be the 16-char App Password
+print(f"[startup] SMTP_SERVER={SMTP_SERVER} SMTP_PORT={SMTP_PORT} SMTP_USERNAME={SMTP_USERNAME}")
 
 # ---- App settings ----
 TIMEZONE = os.getenv("TIMEZONE", "America/Denver")
