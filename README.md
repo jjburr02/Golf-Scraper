@@ -1,6 +1,6 @@
 # Salt Lake City Tee Time Finder (Cloud + SMS)
 
-Continuously polls public Salt Lake City golf course booking pages for **Saturday/Sunday morning** tee times (**before 12:00 PM**) that can fit **4 players**, and sends **SMS alerts via Twilio**.
+Continuously polls public Salt Lake City golf course booking pages for **Saturday/Sunday morning** tee times (**before 12:00 PM**) that can fit **4 players**, and sends **Email to your personal email**.
 
 ## Features
 - Continuous polling (async) with jitter to be polite.
