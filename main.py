@@ -176,3 +176,17 @@ async def main_loop():
 
 if __name__ == "__main__":
     asyncio.run(main_loop())
+
+# env_smoke.py
+import os
+
+print("---- SMTP ENV SMOKE TEST ----")
+print("SMTP_SERVER:", os.getenv("SMTP_SERVER"))
+print("SMTP_PORT:", os.getenv("SMTP_PORT"))
+print("SMTP_USERNAME:", os.getenv("SMTP_USERNAME"))
+print("SMTP_PASSWORD set?:", "yes" if os.getenv("SMTP_PASSWORD") else "no")
+
+# Show all SMTP* vars so we can spot typos
+smtp_vars = {k: os.getenv(k) for k in os.environ if k.upper().startswith("SMTP_")}
+print("All SMTP* envs seen by the process:", smtp_vars)
+print("---- END ----")
