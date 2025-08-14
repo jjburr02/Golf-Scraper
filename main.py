@@ -7,7 +7,7 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from dotenv import load_dotenv
-load_dotenv()  # local dev only; Render uses dashboard env vars
+load_dotenv()  # used for local dev; Render injects envs via dashboard
 
 # ---- DIAGNOSTIC + REQUIRED ENV ----
 def _require_env(name: str) -> str:
@@ -34,17 +34,13 @@ SMTP_SERVER   = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT     = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USERNAME = _require_env("SMTP_USERNAME")   # full Gmail address
 SMTP_PASSWORD = _require_env("SMTP_PASSWORD")   # 16-char Gmail App Password (no spaces)
+EMAIL_TO      = "jjburr02@gmail.com"            # destination email (updated)
+EMAIL_FROM    = SMTP_USERNAME                   # sender (same as your SMTP username)
 # ==============================================
-
-import os, sys
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
 
 import asyncio, random, re, traceback
 from datetime import datetime, timedelta, date
 import aiohttp
-from dotenv import load_dotenv
 import pytz
 import smtplib
 from email.mime.text import MIMEText
@@ -53,37 +49,23 @@ from providers.lightspeed import parse_lightspeed_html
 from providers.generic_html import parse_generic_html
 from storage import state as state_store
 
-load_dotenv()
-# --- DEBUG: verify environment (Render ignores .env; uses dashboard vars) ---
-def _require_env(name):
-    val = os.getenv(name)
-    if val is None or (isinstance(val, str) and val.strip() == ""):
-        raise RuntimeError(f"Missing required env var: {name}")
-    return val
-
-print("[startup] cwd:", os.getcwd())
-print("[startup] __file__ dir:", BASE_DIR)
-print("[startup] seen files:", os.listdir(BASE_DIR))
-
 # ---- App settings ----
 TIMEZONE = os.getenv("TIMEZONE", "America/Denver")
 TZ = pytz.timezone(TIMEZONE)
 
-POLL_SECONDS = int(os.getenv("POLL_SECONDS", "600"))
+POLL_SECONDS  = int(os.getenv("POLL_SECONDS", "600"))
 JITTER_SECONDS = int(os.getenv("JITTER_SECONDS", "30"))
 
-# ---- Courses to monitor (use actual tee-sheet URLs when possible) ----
+# ---- Courses to monitor ----
 COURSE_SOURCES = [
-    {"name": "Bonneville",    "provider": "lightspeed_web", "url": "https://slc-golf.com/bonneville/",     "party_size": 4},
-    {"name": "Forest Dale",   "provider": "lightspeed_web", "url": "https://slc-golf.com/forestdale/",     "party_size": 4},
-    {"name": "Glendale",      "provider": "lightspeed_web", "url": "https://slc-golf.com/glendale/",       "party_size": 4},
-    {"name": "Mountain Dell", "provider": "lightspeed_web", "url": "https://slc-golf.com/mountaindell/",   "party_size": 4},
-    {"name": "Nibley Park",   "provider": "lightspeed_web", "url": "https://slc-golf.com/nibley-park/",    "party_size": 4},
-    {"name": "Rose Park",     "provider": "lightspeed_web", "url": "https://slc-golf.com/rose-park/",      "party_size": 4},
-    {"name": "Old Mill (SLCo)","provider": "lightspeed_web","url": "https://slco.org/parks-recreation/facilities/golf/old-mill/","party_size": 4},
+    {"name": "Bonneville",     "provider": "lightspeed_web", "url": "https://slc-golf.com/bonneville/",    "party_size": 4},
+    {"name": "Forest Dale",    "provider": "lightspeed_web", "url": "https://slc-golf.com/forestdale/",    "party_size": 4},
+    {"name": "Glendale",       "provider": "lightspeed_web", "url": "https://slc-golf.com/glendale/",      "party_size": 4},
+    {"name": "Mountain Dell",  "provider": "lightspeed_web", "url": "https://slc-golf.com/mountaindell/",  "party_size": 4},
+    {"name": "Nibley Park",    "provider": "lightspeed_web", "url": "https://slc-golf.com/nibley-park/",   "party_size": 4},
+    {"name": "Rose Park",      "provider": "lightspeed_web", "url": "https://slc-golf.com/rose-park/",     "party_size": 4},
+    {"name": "Old Mill (SLCo)","provider": "lightspeed_web", "url": "https://slco.org/parks-recreation/facilities/golf/old-mill/", "party_size": 4},
 ]
-
-MORNING_CUTOFF = (12, 0)  # 12:00 PM local — currently unused, using AM-only check below
 
 # ----------------- Helper Functions -----------------
 
@@ -107,14 +89,12 @@ def parse_target_dates():
     return out
 
 def is_morning(time_str: str) -> bool:
-    # Accepts formats like '7:24 AM' or '10:02 AM'
     m = re.match(r"^(\d{1,2}):(\d{2})\s?(AM|PM)$", time_str, re.I)
     if not m:
         return False
     return m.group(3).upper() == "AM"
 
 def capacity_ok(cap) -> bool:
-    # If capacity is known, require >= 4; if unknown, allow (conservative)
     return (cap is None) or (cap >= 4)
 
 async def fetch_html(session: aiohttp.ClientSession, url: str) -> str:
@@ -129,7 +109,6 @@ async def fetch_html(session: aiohttp.ClientSession, url: str) -> str:
 def extract_slots(provider: str, html: str):
     provider = provider.lower()
     items = parse_lightspeed_html(html) if provider == "lightspeed_web" else parse_generic_html(html)
-    # Normalize times: "7:24AM" -> "7:24 AM"
     out = []
     for it in items:
         t = (it.get("time_str", "") or "").upper().replace(" ", "")
@@ -140,8 +119,6 @@ def extract_slots(provider: str, html: str):
     return out
 
 async def check_course(session, course: dict, target_date: date):
-    # NOTE: This fetches the page as-is. Many sites require date selection via query/XHR.
-    # For best results, point course['url'] to the actual day-specific tee-sheet page.
     html = await fetch_html(session, course["url"])
     slots = extract_slots(course["provider"], html)
     morning = [s for s in slots if is_morning(s["time"]) and capacity_ok(s["capacity"])]
